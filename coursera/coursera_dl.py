@@ -240,11 +240,14 @@ def main():
     # 1) If user passed --cookies_file, load it and skip login()
     if args.cookies_file:
         print("DEBUG: loading cookies from", args.cookies_file)
+        # Load a MozillaCookieJar, then inject into session.cookies
         jar = cj.MozillaCookieJar()
         jar.load(args.cookies_file,
-                 ignore_discard=True,
-                 ignore_expires=True)
-        session.cookies = jar
+                ignore_discard=True,
+                ignore_expires=True)
+        for cookie in jar:
+        # copy each cookie into the RequestsCookieJar
+            session.cookies.set_cookie(cookie)
 
     # 2) Else if they passed --cauth, set CAUTH and skip login()
     elif args.cookies_cauth:
